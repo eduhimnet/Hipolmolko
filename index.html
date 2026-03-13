@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Articles & Quiz App</title>
+<style>
+body{font-family:Arial;margin:0;background:linear-gradient(120deg,#eef2ff,#e0f7fa)}
+header{background:linear-gradient(90deg,#4a00e0,#8e2de2);color:#fff;padding:15px;text-align:center}
+nav button{margin:5px;padding:10px 14px;border:none;border-radius:6px;background:#ffffff;color:#4a00e0;font-weight:bold;cursor:pointer;transition:0.3s}
+nav button:hover{background:#ffd54f;color:#000}
+section{display:none;padding:20px}
+.active{display:block}
+textarea,input{width:100%;margin:6px 0;padding:8px;border-radius:6px;border:1px solid #ccc}
+button{padding:10px 15px;border:none;border-radius:6px;background:#4caf50;color:#fff;font-weight:bold;cursor:pointer}
+button:hover{background:#2e7d32}
+.card{background:#ffffff;padding:12px;margin:12px 0;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+h3{color:#4a00e0}
+</style>
+</head>
+<body>
+
+<header>
+<h2>Article Writer + Hindi Quiz</h2>
+<nav>
+<button onclick="show('write')">Write Article</button>
+<button onclick="show('articles')">Show Articles</button>
+<button onclick="show('quiz')">Hindi Quiz</button>
+<button onclick="show('files')">Upload Files</button>
+</nav>
+</header>
+
+<section id="write" class="active">
+<h3>Write Article</h3>
+<input id="title" placeholder="Title">
+<textarea id="content" rows="6" placeholder="Write article..."></textarea>
+<button onclick="saveArticle()">Publish</button>
+</section>
+
+<section id="articles">
+<h3>Saved Articles</h3>
+<div id="articleList"></div>
+</section>
+
+<section id="quiz">
+<h3>Hindi Quiz</h3>
+<div id="quizBox"></div>
+<button onclick="nextQ()">Next</button>
+</section>
+
+<section id="files">
+<h3>Upload Files</h3>
+<input type="file" id="fileInput">
+<button onclick="saveFile()">Save File</button>
+<div id="fileList"></div>
+</section>
+
+<script>
+function show(id){
+document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+if(id==='articles') loadArticles();
+if(id==='files') loadFiles();
+}
+
+function saveArticle(){
+let title=document.getElementById('title').value;
+let content=document.getElementById('content').value;
+let date=new Date().toLocaleString();
+let arr=JSON.parse(localStorage.getItem('articles')||'[]');
+arr.push({title,content,date});
+localStorage.setItem('articles',JSON.stringify(arr));
+alert('Saved');
+}
+
+function loadArticles(){
+let list=document.getElementById('articleList');
+let arr=JSON.parse(localStorage.getItem('articles')||'[]');
+list.innerHTML='';
+arr.forEach(a=>{
+list.innerHTML+=`<div class="card"><h4>${a.title}</h4><p>${a.content}</p><small>${a.date}</small></div>`;
+});
+}
+
+let quiz=[
+{q:"हिंदी की पहली कविता?",a:["रामचरितमानस","पृथ्वीराज रासो","सरस्वती वंदना"],c:1},
+{q:"भारत की राजधानी?",a:["दिल्ली","मुंबई","पटना"],c:0}
+];
+let qi=0;
+
+function loadQuiz(){
+let q=quiz[qi];
+let box=document.getElementById('quizBox');
+box.innerHTML=`<h4>${q.q}</h4>`;
+q.a.forEach((opt,i)=>{
+box.innerHTML+=`<button onclick="check(${i})">${opt}</button><br>`;
+});
+}
+
+function check(i){
+if(i===quiz[qi].c) alert('Correct'); else alert('Wrong');
+}
+
+function nextQ(){
+qi=(qi+1)%quiz.length;
+loadQuiz();
+}
+
+function saveFile(){
+let file=document.getElementById('fileInput').files[0];
+if(!file)return;
+let arr=JSON.parse(localStorage.getItem('files')||'[]');
+arr.push({name:file.name,date:new Date().toLocaleString()});
+localStorage.setItem('files',JSON.stringify(arr));
+alert('File saved (name only)');
+}
+
+function loadFiles(){
+let arr=JSON.parse(localStorage.getItem('files')||'[]');
+let list=document.getElementById('fileList');
+list.innerHTML='';
+arr.forEach(f=>{
+list.innerHTML+=`<div class="card">${f.name}<br><small>${f.date}</small></div>`;
+});
+}
+
+loadQuiz();
+</script>
+
+</body>
+</html>
