@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f0f1a" />
+  <meta name="description" content="Surmolkoltypo - आपका Digital संसार" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Surmolkoltypo" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <title>Surmolkoltypo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --red:    #FF6B6B;
+      --yellow: #FFD93D;
+      --green:  #6BCB77;
+      --blue:   #4D96FF;
+      --purple: #C77DFF;
+      --cyan:   #48CAE4;
+      --orange: #FF9A3C;
+      --pink:   #F72585;
+      --bg:     #0f0f1a;
+      --card:   rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.09);
+      --text:   #ffffff;
+      --muted:  rgba(255,255,255,0.55);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    html,body { height:100%; background:var(--bg); color:var(--text); font-family:'Noto Sans Devanagari','Segoe UI',sans-serif; overflow-x:hidden; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width:4px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15); border-radius:4px; }
+
+    /* ── Background blobs ── */
+    #app { min-height:100vh; max-width:480px; margin:0 auto; position:relative; padding-bottom:78px; }
+    .blob { position:fixed; border-radius:50%; pointer-events:none; z-index:0; }
+    .blob1 { top:-120px; left:-80px; width:320px; height:320px; background:radial-gradient(circle,rgba(77,150,255,.15),transparent 70%); }
+    .blob2 { top:260px; right:-90px; width:270px; height:270px; background:radial-gradient(circle,rgba(199,125,255,.12),transparent 70%); }
+    .blob3 { bottom:120px; left:30px; width:220px; height:220px; background:radial-gradient(circle,rgba(107,203,119,.10),transparent 70%); }
+
+    /* ── Splash ── */
+    #splash { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; z-index:999; }
+    .splash-title { font-family:'Playfair Display',serif; font-size:30px; font-weight:900; background:linear-gradient(90deg,var(--red),var(--yellow),var(--green),var(--blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .splash-sub { font-size:14px; color:var(--muted); }
+    .dots { display:flex; gap:8px; }
+    .dot { width:11px; height:11px; border-radius:50%; animation:bounce .8s ease-in-out infinite; }
+    .dot:nth-child(1){background:var(--red);animation-delay:0s;}
+    .dot:nth-child(2){background:var(--yellow);animation-delay:.18s;}
+    .dot:nth-child(3){background:var(--green);animation-delay:.36s;}
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+    /* ── Header ── */
+    header { position:sticky; top:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:13px 18px; background:rgba(15,15,26,.92); backdrop-filter:blur(22px); border-bottom:1px solid var(--border); }
+    .logo-wrap { display:flex; align-items:center; gap:11px; }
+    .app-name { font-family:'Playfair Display',serif; font-size:18px; font-weight:900; background:linear-gradient(90deg,var(--red),var(--yellow),var(--green),var(--blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1.2; }
+    .app-sub { font-size:10px; color:var(--muted); margin-top:1px; }
+    #installBtn { background:linear-gradient(135deg,var(--blue),var(--green)); border:none; color:#fff; border-radius:22px; padding:7px 15px; font-size:12px; font-weight:700; cursor:pointer; display:none; }
+    #installBtn.show { display:block; }
+
+    /* ── Bottom Nav ── */
+    nav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; display:flex; background:rgba(15,15,26,.96); backdrop-filter:blur(22px); border-top:1px solid var(--border); z-index:100; }
+    .nav-btn { flex:1; display:flex; flex-direction:column; align-items:center; padding:9px 4px 12px; background:none; border:none; color:rgba(255,255,255,.4); cursor:pointer; position:relative; transition:color .2s; }
+    .nav-btn.active { color:var(--blue); }
+    .nav-icon { font-size:21px; }
+    .nav-label { font-size:10px; margin-top:2px; font-weight:600; }
+    .nav-dot { position:absolute; bottom:5px; width:4px; height:4px; border-radius:50%; background:var(--blue); display:none; }
+    .nav-btn.active .nav-dot { display:block; }
+
+    /* ── Tabs ── */
+    .tab { display:none; padding:16px 16px 0; animation:fadeIn .25s ease; }
+    .tab.active { display:block; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ── Section title ── */
+    .sec-title { font-size:16px; font-weight:800; margin-bottom:14px; color:rgba(255,255,255,.92); }
+
+    /* ── Greeting card ── */
+    .greet-card { background:linear-gradient(135deg,rgba(77,150,255,.18),rgba(107,203,119,.14)); border:1px solid rgba(255,255,255,.1); border-radius:22px; padding:20px; margin-bottom:18px; }
+    .greet-text { font-size:23px; font-weight:900; margin-bottom:4px; }
+    .greet-date { font-size:13px; color:var(--muted); }
+
+    /* ── Stats ── */
+    .stats-row { display:flex; gap:10px; margin-bottom:20px; }
+    .stat-card { flex:1; background:var(--card); border-radius:18px; padding:14px 8px; text-align:center; cursor:pointer; border:1px solid var(--border); transition:transform .15s; }
+    .stat-card:active { transform:scale(.96); }
+    .stat-icon { font-size:22px; margin-bottom:4px; }
+    .stat-count { font-size:26px; font-weight:900; }
+    .stat-label { font-size:11px; color:var(--muted); margin-top:2px; }
+
+    /* ── Quick grid ── */
+    .quick-grid { display:grid; grid-template-columns:1fr 1fr; gap:11px; margin-bottom:22px; }
+    .quick-btn { display:flex; flex-direction:column; align-items:center; gap:8px; padding:18px 10px; border-radius:20px; border:none; cursor:pointer; color:#fff; font-weight:700; font-size:13px; font-family:inherit; transition:transform .15s,filter .15s; }
+    .quick-btn:active { transform:scale(.95); filter:brightness(.9); }
+
+    /* ── PWA card ── */
+    .pwa-card { background:rgba(77,150,255,.09); border:1px solid rgba(77,150,255,.28); border-radius:18px; padding:16px; margin:12px 0; }
+    .pwa-card-title { font-size:14px; font-weight:700; color:var(--blue); margin-bottom:6px; }
+    .pwa-card-text { font-size:12.5px; color:rgba(255,255,255,.62); line-height:1.65; }
+
+    /* ── Date header ── */
+    .date-hdr { font-size:12px; font-weight:700; color:var(--yellow); padding:5px 12px; background:rgba(255,211,61,.1); border-radius:20px; display:inline-block; margin:14px 0 10px; }
+
+    /* ── Article card ── */
+    .art-card { border-radius:20px; padding:16px; margin-bottom:13px; cursor:pointer; position:relative; overflow:hidden; transition:transform .15s; }
+    .art-card:active { transform:scale(.98); }
+    .art-cat { font-size:11px; font-weight:700; color:rgba(0,0,0,.5); background:rgba(255,255,255,.38); border-radius:10px; padding:2px 9px; display:inline-block; margin-bottom:8px; }
+    .art-title { font-size:16px; font-weight:800; color:#fff; margin-bottom:6px; }
+    .art-snip { font-size:13px; color:rgba(255,255,255,.8); line-height:1.5; margin-bottom:10px; }
+    .art-meta { display:flex; justify-content:space-between; font-size:12px; color:rgba(255,255,255,.65); }
+    .read-more { font-weight:700; color:#fff; }
+
+    /* ── Article full ── */
+    #articleDetail { display:none; }
+    #articleDetail.active { display:block; }
+    .art-full-head { border-radius:22px; padding:20px; margin-bottom:16px; }
+    .art-full-cat { font-size:11px; font-weight:700; color:rgba(0,0,0,.5); background:rgba(255,255,255,.38); border-radius:10px; padding:3px 10px; display:inline-block; margin-bottom:10px; }
+    .art-full-title { font-size:22px; font-weight:900; color:#fff; margin-bottom:8px; }
+    .art-full-date { font-size:13px; color:rgba(255,255,255,.75); margin-bottom:10px; }
+    .art-tags { display:flex; gap:6px; flex-wrap:wrap; }
+    .tag { background:rgba(255,255,255,.25); border-radius:10px; padding:2px 8px; font-size:11px; color:#fff; }
+    .art-body { background:rgba(255,255,255,.05); border-radius:18px; padding:18px; font-size:15px; line-height:1.8; color:rgba(255,255,255,.9); margin-bottom:16px; white-space:pre-wrap; word-break:break-word; }
+
+    /* ── Buttons ── */
+    .back-btn { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); color:#fff; border-radius:22px; padding:9px 18px; font-size:13px; cursor:pointer; margin-bottom:16px; font-family:inherit; }
+    .delete-btn { background:rgba(255,107,107,.14); border:1px solid rgba(255,107,107,.38); color:var(--red); border-radius:22px; padding:11px 20px; font-size:14px; cursor:pointer; width:100%; font-family:inherit; }
+    .save-btn { width:100%; background:linear-gradient(135deg,var(--blue),var(--green)); border:none; color:#fff; border-radius:16px; padding:14px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit; margin-top:6px; transition:opacity .2s; }
+    .save-btn:disabled { opacity:.6; cursor:not-allowed; }
+
+    /* ── Form ── */
+    .form-card { background:rgba(255,255,255,.04); border-radius:22px; padding:20px; border:1px solid var(--border); }
+    label { display:block; font-size:13px; color:var(--muted); margin-bottom:6px; font-weight:600; }
+    input, select, textarea { width:100%; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.11); border-radius:14px; padding:12px 14px; color:#fff; font-size:14px; margin-bottom:16px; outline:none; font-family:inherit; transition:border-color .2s; }
+    input:focus, select:focus, textarea:focus { border-color:var(--blue); }
+    select option { background:#1a1a2e; }
+    textarea { resize:vertical; min-height:120px; }
+
+    /* ── Wishes ── */
+    .wish-card { border-radius:20px; padding:16px; margin-bottom:13px; color:#fff; }
+    .wish-type { font-size:12px; font-weight:700; opacity:.75; margin-bottom:4px; }
+    .wish-name { font-size:19px; font-weight:900; margin-bottom:6px; }
+    .wish-msg { font-size:14px; font-style:italic; opacity:.9; margin-bottom:6px; line-height:1.55; }
+    .wish-time { font-size:11px; opacity:.6; }
+    .add-wish-btn { background:linear-gradient(135deg,var(--yellow),var(--red)); border:none; color:#fff; border-radius:22px; padding:8px 17px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; }
+
+    /* ── Files ── */
+    .upload-zone { border:2px dashed rgba(199,125,255,.4); border-radius:20px; padding:28px 20px; text-align:center; cursor:pointer; background:rgba(199,125,255,.06); transition:border-color .2s,background .2s; margin-bottom:6px; }
+    .upload-zone:hover, .upload-zone.drag { border-color:var(--purple); background:rgba(199,125,255,.12); }
+    .upload-zone-icon { font-size:40px; margin-bottom:8px; }
+    .upload-zone-text { font-size:14px; font-weight:700; color:var(--purple); margin-bottom:4px; }
+    .upload-zone-sub { font-size:12px; color:var(--muted); }
+    #fileInput { display:none; }
+    .upload-note { font-size:12px; color:var(--muted); text-align:center; margin-bottom:18px; }
+    .file-card { display:flex; align-items:flex-start; gap:12px; background:rgba(255,255,255,.05); border-radius:16px; padding:14px; margin-bottom:11px; border-left:5px solid transparent; transition:transform .15s; }
+    .file-card:active { transform:scale(.98); }
+    .file-icon { font-size:30px; flex-shrink:0; line-height:1; }
+    .file-info { flex:1; min-width:0; }
+    .file-name { font-size:14px; font-weight:700; margin-bottom:4px; word-break:break-all; }
+    .file-meta { font-size:12px; color:var(--muted); }
+    .file-preview { width:100%; max-height:130px; object-fit:cover; border-radius:10px; margin-top:9px; cursor:pointer; }
+    .file-actions { display:flex; flex-direction:column; gap:7px; flex-shrink:0; }
+    .dl-btn { display:flex; align-items:center; justify-content:center; width:37px; height:37px; background:rgba(77,150,255,.18); border-radius:11px; text-decoration:none; font-size:17px; border:1px solid rgba(77,150,255,.35); }
+    .file-del-btn { width:37px; height:37px; background:rgba(255,107,107,.14); border:1px solid rgba(255,107,107,.3); border-radius:11px; cursor:pointer; font-size:17px; font-family:inherit; }
+    .progress-bar { height:4px; background:rgba(255,255,255,.1); border-radius:4px; margin-bottom:14px; overflow:hidden; display:none; }
+    .progress-fill { height:100%; background:linear-gradient(90deg,var(--purple),var(--cyan)); border-radius:4px; transition:width .3s; }
+
+    /* ── Backup/Restore ── */
+    .backup-row { display:flex; gap:10px; margin-bottom:18px; }
+    .backup-btn { flex:1; padding:11px; border-radius:14px; border:none; cursor:pointer; font-size:13px; font-weight:700; font-family:inherit; }
+    .backup-export { background:rgba(107,203,119,.15); color:var(--green); border:1px solid rgba(107,203,119,.35); }
+    .backup-import { background:rgba(77,150,255,.15); color:var(--blue); border:1px solid rgba(77,150,255,.35); }
+    #importInput { display:none; }
+
+    /* ── Empty state ── */
+    .empty { text-align:center; padding:50px 20px; color:rgba(255,255,255,.38); }
+    .empty-icon { font-size:52px; margin-bottom:12px; }
+    .empty-msg { font-size:15px; line-height:1.55; }
+
+    /* ── Mini card (home recent) ── */
+    .mini-card { border-radius:18px; padding:14px 16px; margin-bottom:11px; cursor:pointer; transition:transform .15s; }
+    .mini-card:active { transform:scale(.98); }
+    .mini-title { font-size:15px; font-weight:700; color:#fff; margin-bottom:4px; }
+    .mini-date { font-size:12px; color:rgba(255,255,255,.72); }
+
+    /* ── Toast ── */
+    #toast { position:fixed; bottom:88px; left:50%; transform:translateX(-50%) translateY(20px); padding:12px 26px; border-radius:30px; color:#fff; font-weight:700; font-size:14px; z-index:999; box-shadow:0 4px 22px rgba(0,0,0,.45); white-space:nowrap; opacity:0; transition:opacity .3s,transform .3s; pointer-events:none; }
+    #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    /* ── Image lightbox ── */
+    #lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,.88); z-index:999; align-items:center; justify-content:center; cursor:pointer; }
+    #lightbox.show { display:flex; }
+    #lightbox img { max-width:95vw; max-height:90vh; border-radius:12px; }
+
+    /* ── Responsive ── */
+    @media(min-width:481px){ #app{box-shadow:0 0 60px rgba(0,0,0,.5);} }
+  </style>
+</head>
+<body>
+
+<!-- Blobs -->
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+
+<!-- Splash -->
+<div id="splash">
+  <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+    <defs><linearGradient id="sg" x1="0" y1="0" x2="64" y2="64"><stop offset="0%" stop-color="#FF6B6B"/><stop offset="50%" stop-color="#FFD93D"/><stop offset="100%" stop-color="#4D96FF"/></linearGradient></defs>
+    <rect width="64" height="64" rx="18" fill="url(#sg)"/>
+    <text x="32" y="44" text-anchor="middle" font-size="30" font-weight="900" fill="white" font-family="serif">S</text>
+  </svg>
+  <div class="splash-title">Surmolkoltypo</div>
+  <div class="splash-sub">आपका Digital संसार</div>
+  <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+</div>
+
+<!-- App -->
+<div id="app" style="display:none;">
+
+  <!-- Header -->
+  <header>
+    <div class="logo-wrap">
+      <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+        <defs><linearGradient id="hg" x1="0" y1="0" x2="42" y2="42"><stop offset="0%" stop-color="#FF6B6B"/><stop offset="50%" stop-color="#FFD93D"/><stop offset="100%" stop-color="#4D96FF"/></linearGradient></defs>
+        <rect width="42" height="42" rx="12" fill="url(#hg)"/>
+        <text x="21" y="29" text-anchor="middle" font-size="18" font-weight="900" fill="white" font-family="serif">S</text>
+      </svg>
+      <div>
+        <div class="app-name">Surmolkoltypo</div>
+        <div class="app-sub">आपका Digital संसार</div>
+      </div>
+    </div>
+    <button id="installBtn" onclick="installApp()">📲 Install</button>
+  </header>
+
+  <!-- ── HOME TAB ── -->
+  <div id="tab-home" class="tab active">
+    <div class="greet-card">
+      <div class="greet-text" id="greetText">नमस्ते 🙏</div>
+      <div class="greet-date" id="greetDate"></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card" style="border-top:4px solid var(--blue)" onclick="switchTab('articles')">
+        <div class="stat-icon">📰</div>
+        <div class="stat-count" id="stat-articles">0</div>
+        <div class="stat-label">Articles</div>
+      </div>
+      <div class="stat-card" style="border-top:4px solid var(--yellow)" onclick="switchTab('wishes')">
+        <div class="stat-icon">🎉</div>
+        <div class="stat-count" id="stat-wishes">0</div>
+        <div class="stat-label">Wishes</div>
+      </div>
+      <div class="stat-card" style="border-top:4px solid var(--purple)" onclick="switchTab('files')">
+        <div class="stat-icon">📁</div>
+        <div class="stat-count" id="stat-files">0</div>
+        <div class="stat-label">Files</div>
+      </div>
+    </div>
+    <div class="sec-title">⚡ Quick Actions</div>
+    <div class="quick-grid">
+      <button class="quick-btn" style="background:linear-gradient(135deg,#4D96FF,#6BCB77)" onclick="switchTab('write')">
+        <span style="font-size:28px">✍️</span>New Article
+      </button>
+      <button class="quick-btn" style="background:linear-gradient(135deg,#FFD93D,#FF6B6B)" onclick="switchTab('wishes')">
+        <span style="font-size:28px">🎉</span>Add Wish
+      </button>
+      <button class="quick-btn" style="background:linear-gradient(135deg,#C77DFF,#48CAE4)" onclick="switchTab('files')">
+        <span style="font-size:28px">📤</span>Upload File
+      </button>
+      <button class="quick-btn" style="background:linear-gradient(135deg,#FF9A3C,#FFD93D)" onclick="switchTab('articles')">
+        <span style="font-size:28px">📰</span>All Articles
+      </button>
+    </div>
+    <div class="sec-title">🕒 Recent Articles</div>
+    <div id="recentArticles"><div class="empty"><div class="empty-icon">📰</div><div class="empty-msg">कोई article नहीं है अभी तक</div></div></div>
+    <div class="pwa-card">
+      <div class="pwa-card-title">📲 PWA – Install करें</div>
+      <div class="pwa-card-text">ऊपर <b>Install</b> बटन दबाएं या Browser Menu → <b>"Add to Home Screen"</b> चुनें। App Phone/Desktop पर Save हो जाएगी और Offline भी चलेगी।<br><br>⚠️ <b>Data Backup:</b> Files tab में जाकर अपना Data Export करें — Browser साफ़ होने पर Import से Data वापस लाएं।</div>
+    </div>
+    <div style="height:12px"></div>
+  </div>
+
+  <!-- ── ARTICLES TAB ── -->
+  <div id="tab-articles" class="tab">
+    <!-- List view -->
+    <div id="articleList">
+      <div class="sec-title">📰 सभी Articles</div>
+      <div id="articleListContent"></div>
+    </div>
+    <!-- Detail view -->
+    <div id="articleDetail">
+      <button class="back-btn" onclick="backToList()">← वापस</button>
+      <div id="artDetailHead" class="art-full-head"></div>
+      <div id="artDetailBody" class="art-body"></div>
+      <button class="delete-btn" onclick="deleteCurrentArticle()">🗑️ Article Delete करें</button>
+      <div style="height:12px"></div>
+    </div>
+  </div>
+
+  <!-- ── WRITE TAB ── -->
+  <div id="tab-write" class="tab">
+    <div class="sec-title">✍️ नया Article लिखें</div>
+    <div class="form-card">
+      <label>📝 Title *</label>
+      <input type="text" id="writeTitle" placeholder="Article का Title लिखें…" />
+      <label>📂 Category</label>
+      <select id="writeCategory">
+        <option>General</option><option>News</option><option>Technology</option>
+        <option>Health</option><option>Education</option><option>Entertainment</option>
+        <option>Sports</option><option>Politics</option><option>Business</option><option>Other</option>
+      </select>
+      <label>🏷️ Tags (comma से अलग करें)</label>
+      <input type="text" id="writeTags" placeholder="tag1, tag2, tag3" />
+      <label>📄 Content *</label>
+      <textarea id="writeBody" placeholder="यहाँ Article लिखें…" rows="9"></textarea>
+      <button class="save-btn" id="writeBtn" onclick="publishArticle()">💾 Article Publish करें</button>
+    </div>
+    <div style="height:12px"></div>
+  </div>
+
+  <!-- ── WISHES TAB ── -->
+  <div id="tab-wishes" class="tab">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div class="sec-title" style="margin-bottom:0">🎉 Wishes</div>
+      <button class="add-wish-btn" onclick="toggleWishForm()">➕ Add Wish</button>
+    </div>
+    <div id="wishForm" style="display:none;margin-bottom:16px;">
+      <div class="form-card">
+        <label>👤 किसके लिए?</label>
+        <input type="text" id="wishName" placeholder="नाम लिखें…" />
+        <label>🎊 Type</label>
+        <select id="wishType">
+          <option>Birthday 🎂</option><option>Anniversary 💍</option>
+          <option>New Year 🎊</option><option>Festival 🪔</option>
+          <option>Success 🏆</option><option>Get Well Soon 🌸</option>
+          <option>Congratulations 🥳</option><option>Other 🌟</option>
+        </select>
+        <label>💬 शुभकामना संदेश</label>
+        <textarea id="wishMsg" placeholder="यहाँ Message लिखें…" rows="3"></textarea>
+        <button class="save-btn" style="background:linear-gradient(135deg,var(--yellow),var(--orange))" onclick="saveWish()">🎉 Wish Save करें</button>
+      </div>
+    </div>
+    <div id="wishListContent"></div>
+  </div>
+
+  <!-- ── FILES TAB ── -->
+  <div id="tab-files" class="tab">
+    <div class="sec-title">📁 Files</div>
+
+    <!-- Backup / Restore -->
+    <div class="backup-row">
+      <button class="backup-btn backup-export" onclick="exportData()">📤 Data Export</button>
+      <button class="backup-btn backup-import" onclick="document.getElementById('importInput').click()">📥 Data Import</button>
+    </div>
+    <input type="file" id="importInput" accept=".json" onchange="importData(event)" />
+
+    <!-- Upload Zone -->
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)">
+      <div class="upload-zone-icon">📂</div>
+      <div class="upload-zone-text">File Upload करने के लिए यहाँ Click करें</div>
+      <div class="upload-zone-sub">या File को यहाँ Drag & Drop करें</div>
+    </div>
+    <input type="file" id="fileInput" onchange="handleFileSelect(event)" />
+    <div class="upload-note">📌 Max: 4MB per file • Images, PDF, Docs, Video, Audio सब</div>
+
+    <!-- Progress -->
+    <div class="progress-bar" id="progressBar">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+
+    <div id="fileListContent"></div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- Bottom Nav -->
+<nav>
+  <button class="nav-btn active" id="nav-home" onclick="switchTab('home')">
+    <span class="nav-icon">🏠</span><span class="nav-label">Home</span><div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" id="nav-articles" onclick="switchTab('articles')">
+    <span class="nav-icon">📰</span><span class="nav-label">Articles</span><div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" id="nav-write" onclick="switchTab('write')">
+    <span class="nav-icon">✍️</span><span class="nav-label">Write</span><div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" id="nav-wishes" onclick="switchTab('wishes')">
+    <span class="nav-icon">🎉</span><span class="nav-label">Wishes</span><div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" id="nav-files" onclick="switchTab('files')">
+    <span class="nav-icon">📁</span><span class="nav-label">Files</span><div class="nav-dot"></div>
+  </button>
+</nav>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Lightbox -->
+<div id="lightbox" onclick="this.classList.remove('show')"><img id="lightboxImg" src="" alt="preview" /></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  STORAGE — localStorage (persists across sessions)
+// ═══════════════════════════════════════════════════════════════
+const LS = {
+  get(k)    { try{ const v=localStorage.getItem(k); return v?JSON.parse(v):[];} catch{return[];} },
+  set(k,v)  { try{ localStorage.setItem(k,JSON.stringify(v));} catch(e){ showToast('⚠️ Storage Full! Data Export करें।','#FF6B6B'); }},
+};
+const KEYS = { A:'smkt_articles', W:'smkt_wishes', F:'smkt_files' };
+
+let articles=[], wishes=[], files=[], currentArticleId=null;
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  // Register Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  }
+
+  articles = LS.get(KEYS.A);
+  wishes   = LS.get(KEYS.W);
+  files    = LS.get(KEYS.F);
+
+  // Migrate old data if needed
+  articles.forEach(a=>{ if(!a.id) a.id=Date.now().toString(); });
+  files.forEach(f=>{ if(!f.id) f.id=Date.now().toString(); });
+
+  setupGreeting();
+  renderAll();
+
+  setTimeout(()=>{
+    document.getElementById('splash').style.display='none';
+    document.getElementById('app').style.display='block';
+  }, 1800);
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  PWA INSTALL
+// ═══════════════════════════════════════════════════════════════
+let installPromptEvt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  installPromptEvt = e;
+  document.getElementById('installBtn').classList.add('show');
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBtn').classList.remove('show');
+  showToast('✅ App Install हो गया!', '#6BCB77');
+});
+async function installApp() {
+  if (!installPromptEvt) { showToast('ℹ️ Browser Menu → Add to Home Screen', '#4D96FF'); return; }
+  installPromptEvt.prompt();
+  const r = await installPromptEvt.userChoice;
+  if (r.outcome === 'accepted') showToast('✅ App Install हो गया!', '#6BCB77');
+  installPromptEvt = null;
+  document.getElementById('installBtn').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  GREETING
+// ═══════════════════════════════════════════════════════════════
+function setupGreeting() {
+  const h = new Date().getHours();
+  const greetings = h<5?'शुभ रात्रि 🌙':h<12?'शुभ प्रभात 🌅':h<17?'नमस्ते 🙏':h<21?'शुभ संध्या 🌆':'शुभ रात्रि 🌙';
+  document.getElementById('greetText').textContent = greetings;
+  document.getElementById('greetDate').textContent = new Date().toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById('nav-'+tab).classList.add('active');
+  if(tab==='articles'){ document.getElementById('articleList').style.display='block'; document.getElementById('articleDetail').style.display='none'; }
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  RENDER ALL
+// ═══════════════════════════════════════════════════════════════
+function renderAll() {
+  document.getElementById('stat-articles').textContent = articles.length;
+  document.getElementById('stat-wishes').textContent   = wishes.length;
+  document.getElementById('stat-files').textContent    = files.length;
+  renderRecent();
+  renderArticles();
+  renderWishes();
+  renderFiles();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════════
+const ACOLS = [
+  'linear-gradient(135deg,#FF6B6B,#FFD93D)',
+  'linear-gradient(135deg,#6BCB77,#4D96FF)',
+  'linear-gradient(135deg,#C77DFF,#48CAE4)',
+  'linear-gradient(135deg,#FFB347,#FF6961)',
+  'linear-gradient(135deg,#56CFE1,#72EFDD)',
+  'linear-gradient(135deg,#FF9A9E,#FECFEF)',
+  'linear-gradient(135deg,#A8EDEA,#FED6E3)',
+  'linear-gradient(135deg,#D4FC79,#96E6A1)',
+];
+const WCOLS = ['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#C77DFF','#FF9A3C','#48CAE4','#F72585'];
+const FCOLS = ['#4D96FF','#6BCB77','#FFD93D','#FF6B6B','#C77DFF','#FF9A3C','#48CAE4'];
+
+function rc(a,i){ return a[((i%a.length)+a.length)%a.length]; }
+function fd(iso){ return new Date(iso).toLocaleDateString('hi-IN',{day:'2-digit',month:'long',year:'numeric'}); }
+function ft(iso){ return new Date(iso).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'}); }
+function fs(b){ return b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB'; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function groupByDate(items){
+  const g={};
+  items.forEach(x=>{ const d=x.date.split('T')[0]; if(!g[d])g[d]=[]; g[d].push(x); });
+  return Object.entries(g).sort((a,b)=>b[0].localeCompare(a[0]));
+}
+
+function fileIcon(type){
+  if(!type)return'📎';
+  if(type.startsWith('image/'))return'🖼️';
+  if(type.includes('pdf'))return'📄';
+  if(type.includes('word')||type.includes('document'))return'📝';
+  if(type.includes('excel')||type.includes('spreadsheet')||type.includes('csv'))return'📊';
+  if(type.startsWith('video/'))return'🎥';
+  if(type.startsWith('audio/'))return'🎵';
+  if(type.includes('zip')||type.includes('rar')||type.includes('7z'))return'🗜️';
+  if(type.includes('text'))return'📃';
+  return'📎';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg, bg='#6BCB77'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.background=bg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  HOME – RECENT
+// ═══════════════════════════════════════════════════════════════
+function renderRecent(){
+  const el=document.getElementById('recentArticles');
+  if(!articles.length){ el.innerHTML='<div class="empty"><div class="empty-icon">📰</div><div class="empty-msg">कोई Article नहीं है। नया Article लिखें!</div></div>'; return; }
+  el.innerHTML = articles.slice(0,3).map((a,i)=>`
+    <div class="mini-card" style="background:${rc(ACOLS,i)}" onclick="openArticle('${esc(a.id)}')">
+      <div class="mini-title">${esc(a.title)}</div>
+      <div class="mini-date">📅 ${fd(a.date)}</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ARTICLES
+// ═══════════════════════════════════════════════════════════════
+function renderArticles(){
+  const el=document.getElementById('articleListContent');
+  if(!articles.length){ el.innerHTML='<div class="empty"><div class="empty-icon">📰</div><div class="empty-msg">कोई Article नहीं है।<br>Write tab में नया Article लिखें!</div></div>'; return; }
+  const groups=groupByDate(articles);
+  let html='';
+  let idx=0;
+  groups.forEach(([day,items])=>{
+    html+=`<div class="date-hdr">📅 ${fd(day+'T00:00:00')}</div>`;
+    items.forEach(a=>{
+      html+=`<div class="art-card" style="background:${rc(ACOLS,idx++)}" onclick="openArticle('${esc(a.id)}')">
+        <div class="art-cat">${esc(a.category||'General')}</div>
+        <div class="art-title">${esc(a.title)}</div>
+        <div class="art-snip">${esc((a.body||'').slice(0,100))}…</div>
+        <div class="art-meta"><span>⏰ ${ft(a.date)}</span><span class="read-more">पढ़ें →</span></div>
+      </div>`;
+    });
+  });
+  el.innerHTML=html;
+}
+
+function openArticle(id){
+  const a=articles.find(x=>x.id===id); if(!a)return;
+  currentArticleId=id;
+  const tags=(a.tags||'').split(',').filter(t=>t.trim()).map(t=>`<span class="tag">${esc(t.trim())}</span>`).join('');
+  document.getElementById('artDetailHead').style.background=rc(ACOLS,articles.indexOf(a));
+  document.getElementById('artDetailHead').innerHTML=`
+    <div class="art-full-cat">${esc(a.category||'General')}</div>
+    <div class="art-full-title">${esc(a.title)}</div>
+    <div class="art-full-date">📅 ${fd(a.date)} &nbsp;⏰ ${ft(a.date)}</div>
+    ${tags?'<div class="art-tags">'+tags+'</div>':''}`;
+  document.getElementById('artDetailBody').textContent=a.body||'';
+  document.getElementById('articleList').style.display='none';
+  document.getElementById('articleDetail').style.display='block';
+}
+
+function backToList(){
+  document.getElementById('articleList').style.display='block';
+  document.getElementById('articleDetail').style.display='none';
+  currentArticleId=null;
+}
+
+function deleteCurrentArticle(){
+  if(!currentArticleId||!confirm('क्या आप यह Article Delete करना चाहते हैं?'))return;
+  articles=articles.filter(a=>a.id!==currentArticleId);
+  LS.set(KEYS.A,articles);
+  showToast('🗑️ Article Delete हुआ','#FF6B6B');
+  backToList(); renderAll();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  WRITE / PUBLISH
+// ═══════════════════════════════════════════════════════════════
+function publishArticle(){
+  const title=document.getElementById('writeTitle').value.trim();
+  const body =document.getElementById('writeBody').value.trim();
+  if(!title||!body){ showToast('⚠️ Title और Content जरूरी है!','#FF6B6B'); return; }
+  const btn=document.getElementById('writeBtn');
+  btn.disabled=true; btn.textContent='⏳ Publishing…';
+  const article={ id:Date.now().toString(), title, body, category:document.getElementById('writeCategory').value, tags:document.getElementById('writeTags').value, date:new Date().toISOString() };
+  articles.unshift(article);
+  LS.set(KEYS.A,articles);
+  document.getElementById('writeTitle').value='';
+  document.getElementById('writeBody').value='';
+  document.getElementById('writeTags').value='';
+  btn.disabled=false; btn.textContent='💾 Article Publish करें';
+  showToast('📰 Article Publish हुआ!','#4D96FF');
+  renderAll(); switchTab('articles');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  WISHES
+// ═══════════════════════════════════════════════════════════════
+function toggleWishForm(){
+  const f=document.getElementById('wishForm');
+  f.style.display=f.style.display==='none'?'block':'none';
+}
+
+function saveWish(){
+  const name=document.getElementById('wishName').value.trim();
+  const msg =document.getElementById('wishMsg').value.trim();
+  if(!name||!msg){ showToast('⚠️ नाम और Message जरूरी है!','#FF6B6B'); return; }
+  const wish={ id:Date.now().toString(), name, msg, type:document.getElementById('wishType').value, date:new Date().toISOString() };
+  wishes.unshift(wish);
+  LS.set(KEYS.W,wishes);
+  document.getElementById('wishName').value='';
+  document.getElementById('wishMsg').value='';
+  document.getElementById('wishForm').style.display='none';
+  showToast('🎉 Wish Save हो गया!','#FFD93D');
+  renderAll();
+}
+
+function deleteWish(id){
+  if(!confirm('Wish Delete करें?'))return;
+  wishes=wishes.filter(w=>w.id!==id);
+  LS.set(KEYS.W,wishes);
+  showToast('🗑️ Wish Delete हुई','#FF6B6B');
+  renderAll();
+}
+
+function renderWishes(){
+  const el=document.getElementById('wishListContent');
+  if(!wishes.length){ el.innerHTML='<div class="empty"><div class="empty-icon">🎉</div><div class="empty-msg">कोई Wish नहीं है।<br>ऊपर Add Wish से जोड़ें!</div></div>'; return; }
+  const groups=groupByDate(wishes);
+  let html='', idx=0;
+  groups.forEach(([day,items])=>{
+    html+=`<div class="date-hdr">📅 ${fd(day+'T00:00:00')}</div>`;
+    items.forEach(w=>{
+      html+=`<div class="wish-card" style="background:${rc(WCOLS,idx++)}">
+        <div class="wish-type">${esc(w.type)}</div>
+        <div class="wish-name">${esc(w.name)} को</div>
+        <div class="wish-msg">"${esc(w.msg)}"</div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="wish-time">⏰ ${ft(w.date)}</div>
+          <button onclick="deleteWish('${esc(w.id)}')" style="background:rgba(0,0,0,.2);border:none;color:#fff;border-radius:8px;padding:4px 9px;cursor:pointer;font-size:13px">🗑️</button>
+        </div>
+      </div>`;
+    });
+  });
+  el.innerHTML=html;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  FILES — FIXED UPLOAD
+// ═══════════════════════════════════════════════════════════════
+function dragOver(e){ e.preventDefault(); document.getElementById('uploadZone').classList.add('drag'); }
+function dragLeave(){ document.getElementById('uploadZone').classList.remove('drag'); }
+function dropFile(e){
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag');
+  const file=e.dataTransfer.files[0];
+  if(file) processFile(file);
+}
+
+function handleFileSelect(e){
+  const file=e.target.files[0];
+  if(file) processFile(file);
+  // Reset so same file can be re-selected
+  e.target.value='';
+}
+
+function processFile(file){
+  if(file.size > 4*1024*1024){
+    showToast('⚠️ File बहुत बड़ी है! Max 4MB','#FF6B6B'); return;
+  }
+  const bar=document.getElementById('progressBar');
+  const fill=document.getElementById('progressFill');
+  bar.style.display='block'; fill.style.width='0%';
+
+  const reader=new FileReader();
+  reader.onprogress=(e)=>{ if(e.lengthComputable) fill.style.width=(e.loaded/e.total*90)+'%'; };
+  reader.onload=(e)=>{
+    fill.style.width='100%';
+    setTimeout(()=>{ bar.style.display='none'; fill.style.width='0%'; },600);
+    const f={ id:Date.now().toString(), name:file.name, type:file.type||'application/octet-stream', size:file.size, data:e.target.result, date:new Date().toISOString() };
+    files.unshift(f);
+    LS.set(KEYS.F,files);
+    showToast('✅ '+file.name+' Upload हुआ!','#C77DFF');
+    renderAll();
+  };
+  reader.onerror=()=>{ showToast('❌ File Read Error!','#FF6B6B'); bar.style.display='none'; };
+  reader.readAsDataURL(file);
+}
+
+function deleteFile(id){
+  if(!confirm('File Delete करें?'))return;
+  files=files.filter(f=>f.id!==id);
+  LS.set(KEYS.F,files);
+  showToast('🗑️ File Delete हुई','#FF6B6B');
+  renderAll();
+}
+
+function openLightbox(src){
+  document.getElementById('lightboxImg').src=src;
+  document.getElementById('lightbox').classList.add('show');
+}
+
+function renderFiles(){
+  const el=document.getElementById('fileListContent');
+  if(!files.length){ el.innerHTML='<div class="empty"><div class="empty-icon">📁</div><div class="empty-msg">कोई File नहीं है।<br>ऊपर Click करके Upload करें!</div></div>'; return; }
+  const groups=groupByDate(files);
+  let html='', idx=0;
+  groups.forEach(([day,items])=>{
+    html+=`<div class="date-hdr">📅 ${fd(day+'T00:00:00')}</div>`;
+    items.forEach(f=>{
+      const isImg=f.type&&f.type.startsWith('image/');
+      html+=`<div class="file-card" style="border-left-color:${rc(FCOLS,idx++)}">
+        <div class="file-icon">${fileIcon(f.type)}</div>
+        <div class="file-info">
+          <div class="file-name">${esc(f.name)}</div>
+          <div class="file-meta">${fs(f.size)} &nbsp;•&nbsp; ⏰ ${ft(f.date)}</div>
+          ${isImg?`<img class="file-preview" src="${f.data}" alt="${esc(f.name)}" onclick="openLightbox('${f.data}')" />`:''}
+        </div>
+        <div class="file-actions">
+          <a href="${f.data}" download="${esc(f.name)}" class="dl-btn">⬇️</a>
+          <button class="file-del-btn" onclick="deleteFile('${esc(f.id)}')">🗑️</button>
+        </div>
+      </div>`;
+    });
+  });
+  el.innerHTML=html;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  BACKUP / RESTORE
+// ═══════════════════════════════════════════════════════════════
+function exportData(){
+  const data={ version:2, exportDate:new Date().toISOString(), articles, wishes, files };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='surmolkoltypo-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('✅ Data Export हो गया!','#6BCB77');
+}
+
+function importData(e){
+  const file=e.target.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(ev)=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!data.articles&&!data.wishes&&!data.files) throw new Error('Invalid');
+      if(confirm(`Import करें?\nArticles: ${(data.articles||[]).length}\nWishes: ${(data.wishes||[]).length}\nFiles: ${(data.files||[]).length}\n\nपुराना Data Replace हो जाएगा!`)){
+        articles=data.articles||[]; wishes=data.wishes||[]; files=data.files||[];
+        LS.set(KEYS.A,articles); LS.set(KEYS.W,wishes); LS.set(KEYS.F,files);
+        showToast('✅ Data Import हो गया!','#6BCB77');
+        renderAll();
+      }
+    }catch{ showToast('❌ Invalid Backup File!','#FF6B6B'); }
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+</script>
+</body>
+</html>
