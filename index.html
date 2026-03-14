@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#0a0a18"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Surmolkoltypo"/>
+<meta name="description" content="Surmolkoltypo — आपका Digital संसार, हमेशा के लिए"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icons/icon-192.png"/>
+<title>Surmolkoltypo</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════
+   ROOT VARIABLES
+═══════════════════════════════════════════ */
+:root{
+  --r:#FF6B6B;--y:#FFD93D;--g:#6BCB77;--b:#4D96FF;
+  --p:#C77DFF;--c:#48CAE4;--o:#FF9A3C;--pk:#F72585;
+  --bg:#0a0a18;--card:rgba(255,255,255,.055);
+  --bdr:rgba(255,255,255,.09);--text:#fff;
+  --muted:rgba(255,255,255,.52);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);
+  font-family:'Noto Sans Devanagari','Segoe UI',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:3px}
+
+/* ── ANIMATED BACKGROUND ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 400px 300px at 10% 10%,rgba(77,150,255,.12),transparent),
+    radial-gradient(ellipse 350px 280px at 90% 30%,rgba(199,125,255,.10),transparent),
+    radial-gradient(ellipse 300px 250px at 20% 80%,rgba(107,203,119,.09),transparent),
+    radial-gradient(ellipse 280px 220px at 80% 85%,rgba(255,107,107,.08),transparent);
+}
+
+/* ── LOADING BAR ── */
+#loadBar{position:fixed;top:0;left:0;height:3px;width:0;
+  background:linear-gradient(90deg,var(--r),var(--y),var(--g),var(--b));
+  z-index:9999;transition:width .4s ease;border-radius:0 3px 3px 0}
+
+/* ── SPLASH ── */
+#splash{position:fixed;inset:0;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;z-index:999}
+.sp-logo{animation:logoPop .6s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes logoPop{from{transform:scale(0) rotate(-20deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.sp-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;
+  background:linear-gradient(90deg,var(--r),var(--y),var(--g),var(--b));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:fadeUp .5s .3s both}
+.sp-sub{font-size:13px;color:var(--muted);animation:fadeUp .5s .45s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.dots{display:flex;gap:8px;animation:fadeUp .5s .6s both}
+.dot{width:10px;height:10px;border-radius:50%;animation:bounce .9s ease-in-out infinite}
+.dot:nth-child(1){background:var(--r)}
+.dot:nth-child(2){background:var(--y);animation-delay:.2s}
+.dot:nth-child(3){background:var(--g);animation-delay:.4s}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+/* ══════════════════════════════════════════
+   SETUP SCREEN
+══════════════════════════════════════════ */
+#setupScreen{
+  position:fixed;inset:0;background:var(--bg);
+  display:none;flex-direction:column;overflow-y:auto;
+  padding:24px 20px 40px;z-index:998;
+  max-width:480px;margin:0 auto;
+}
+.setup-header{text-align:center;margin-bottom:28px;padding-top:20px}
+.setup-logo{margin-bottom:14px}
+.setup-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;
+  background:linear-gradient(90deg,var(--r),var(--y),var(--g),var(--b));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.setup-sub{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.7}
+
+.why-cloud{background:linear-gradient(135deg,rgba(77,150,255,.1),rgba(107,203,119,.08));
+  border:1px solid rgba(77,150,255,.22);border-radius:20px;padding:18px;margin-bottom:22px}
+.why-title{font-size:14px;font-weight:800;color:var(--b);margin-bottom:10px}
+.why-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:13px;color:rgba(255,255,255,.75);line-height:1.55}
+.why-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+
+.steps-card{background:var(--card);border:1px solid var(--bdr);border-radius:20px;padding:18px;margin-bottom:20px}
+.steps-title{font-size:14px;font-weight:800;color:var(--y);margin-bottom:14px}
+.step{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
+.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:900;flex-shrink:0;margin-top:1px}
+.step-text{font-size:13px;color:rgba(255,255,255,.8);line-height:1.7}
+.step-text a{color:var(--b);text-decoration:none;font-weight:700}
+.step-text code{background:rgba(255,255,255,.1);padding:2px 6px;border-radius:6px;
+  font-size:12px;color:var(--g);font-family:monospace}
+
+.token-section{margin-bottom:20px}
+.token-label{font-size:14px;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:10px}
+.token-input-wrap{position:relative;display:flex;gap:8px}
+#tokenInput{flex:1;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.14);
+  border-radius:14px;padding:13px 16px;color:#fff;font-size:14px;outline:none;
+  font-family:inherit;transition:border-color .2s}
+#tokenInput:focus{border-color:var(--b)}
+#tokenInput::placeholder{color:var(--muted)}
+.token-toggle{background:rgba(255,255,255,.08);border:1px solid var(--bdr);color:var(--muted);
+  border-radius:10px;padding:8px 12px;cursor:pointer;font-size:16px;flex-shrink:0;align-self:stretch}
+
+.connect-btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--b),var(--g));
+  border:none;border-radius:16px;color:#fff;font-size:16px;font-weight:900;
+  cursor:pointer;font-family:inherit;transition:transform .15s,filter .15s;
+  display:flex;align-items:center;justify-content:center;gap:10px}
+.connect-btn:active{transform:scale(.97)}
+.connect-btn:disabled{opacity:.6;cursor:not-allowed}
+
+.token-note{font-size:12px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.6}
+
+/* ══════════════════════════════════════════
+   MAIN APP
+══════════════════════════════════════════ */
+#app{display:none;flex-direction:column;min-height:100vh;
+  max-width:480px;margin:0 auto;position:relative;padding-bottom:76px}
+
+/* ── Header ── */
+header{position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 16px;background:rgba(10,10,24,.93);
+  backdrop-filter:blur(24px);border-bottom:1px solid var(--bdr)}
+.hdr-l{display:flex;align-items:center;gap:10px}
+.app-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:900;
+  background:linear-gradient(90deg,var(--r),var(--y),var(--g),var(--b));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.app-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.hdr-r{display:flex;align-items:center;gap:8px}
+.sync-indicator{font-size:11px;color:var(--g);font-weight:700;
+  background:rgba(107,203,119,.12);border:1px solid rgba(107,203,119,.3);
+  border-radius:20px;padding:4px 10px;display:flex;align-items:center;gap:5px}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--g);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hdr-btn{background:rgba(255,255,255,.07);border:1px solid var(--bdr);
+  color:rgba(255,255,255,.75);border-radius:20px;padding:5px 10px;font-size:11px;
+  cursor:pointer;font-family:inherit;transition:.2s}
+.hdr-btn:hover{background:rgba(255,255,255,.12)}
+#installBtn{background:linear-gradient(135deg,var(--b),var(--g));border:none;
+  color:#fff;border-radius:22px;padding:6px 13px;font-size:11px;font-weight:700;
+  cursor:pointer;display:none}
+#installBtn.show{display:block}
+
+/* ── Bottom Nav ── */
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;display:flex;
+  background:rgba(10,10,24,.96);backdrop-filter:blur(24px);
+  border-top:1px solid var(--bdr);z-index:100}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:9px 4px 12px;background:none;border:none;
+  color:rgba(255,255,255,.38);cursor:pointer;position:relative;
+  transition:color .2s;font-family:inherit}
+.nb.on{color:var(--b)}
+.nb-i{font-size:20px}.nb-l{font-size:10px;margin-top:2px;font-weight:600}
+.nb-dot{position:absolute;bottom:5px;width:4px;height:4px;
+  border-radius:50%;background:var(--b);display:none}
+.nb.on .nb-dot{display:block}
+
+/* ── Tabs ── */
+.tab{display:none;padding:16px 16px 0;animation:fadein .22s ease}
+.tab.on{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Section title ── */
+.stitle{font-size:16px;font-weight:800;margin-bottom:14px;color:rgba(255,255,255,.92)}
+
+/* ── Greeting ── */
+.greet{background:linear-gradient(135deg,rgba(77,150,255,.17),rgba(107,203,119,.13));
+  border:1px solid rgba(255,255,255,.1);border-radius:22px;
+  padding:20px;margin-bottom:18px}
+.greet-t{font-size:23px;font-weight:900;margin-bottom:4px}
+.greet-d{font-size:13px;color:var(--muted)}
+
+/* ── Stats ── */
+.stats{display:flex;gap:10px;margin-bottom:20px}
+.sc{flex:1;background:var(--card);border-radius:18px;padding:14px 8px;
+  text-align:center;cursor:pointer;border:1px solid var(--bdr);transition:transform .15s}
+.sc:active{transform:scale(.95)}
+.sc-i{font-size:22px;margin-bottom:4px}
+.sc-n{font-size:26px;font-weight:900}
+.sc-l{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* ── Quick grid ── */
+.qg{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:22px}
+.qb{display:flex;flex-direction:column;align-items:center;gap:7px;
+  padding:17px 10px;border-radius:20px;border:none;cursor:pointer;
+  color:#fff;font-weight:700;font-size:13px;font-family:inherit;
+  transition:transform .15s,filter .15s}
+.qb:active{transform:scale(.95);filter:brightness(.9)}
+
+/* ── Cloud badge ── */
+.cbadge{background:rgba(107,203,119,.09);border:1px solid rgba(107,203,119,.25);
+  border-radius:18px;padding:14px 16px;margin:10px 0;
+  display:flex;align-items:center;gap:12px}
+.cbadge-icon{font-size:24px;flex-shrink:0}
+.cbadge-text{font-size:12.5px;color:rgba(255,255,255,.65);line-height:1.6}
+.cbadge-title{font-size:13px;font-weight:700;color:var(--g);margin-bottom:3px}
+
+/* ── Date header ── */
+.dhdr{font-size:12px;font-weight:700;color:var(--y);
+  padding:5px 12px;background:rgba(255,211,61,.1);border-radius:20px;
+  display:inline-block;margin:14px 0 10px}
+
+/* ── Article cards ── */
+.ac{border-radius:20px;padding:16px;margin-bottom:13px;cursor:pointer;transition:transform .15s}
+.ac:active{transform:scale(.98)}
+.ac-cat{font-size:11px;font-weight:700;color:rgba(0,0,0,.5);
+  background:rgba(255,255,255,.38);border-radius:10px;
+  padding:2px 9px;display:inline-block;margin-bottom:8px}
+.ac-t{font-size:16px;font-weight:800;color:#fff;margin-bottom:6px}
+.ac-s{font-size:13px;color:rgba(255,255,255,.8);line-height:1.5;margin-bottom:10px}
+.ac-m{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.65)}
+.rm{font-weight:700;color:#fff}
+/* detail */
+.ad{display:none}
+.ad-head{border-radius:22px;padding:20px;margin-bottom:16px}
+.ad-cat{font-size:11px;font-weight:700;color:rgba(0,0,0,.5);
+  background:rgba(255,255,255,.38);border-radius:10px;
+  padding:3px 10px;display:inline-block;margin-bottom:10px}
+.ad-t{font-size:22px;font-weight:900;color:#fff;margin-bottom:8px}
+.ad-date{font-size:13px;color:rgba(255,255,255,.75);margin-bottom:10px}
+.ad-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{background:rgba(255,255,255,.25);border-radius:10px;padding:2px 8px;font-size:11px;color:#fff}
+.ad-body{background:rgba(255,255,255,.05);border-radius:18px;padding:18px;
+  font-size:15px;line-height:1.8;color:rgba(255,255,255,.9);
+  margin-bottom:16px;white-space:pre-wrap;word-break:break-word}
+/* mini card */
+.mc{border-radius:18px;padding:14px 16px;margin-bottom:11px;cursor:pointer;transition:transform .15s}
+.mc:active{transform:scale(.98)}
+.mc-t{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px}
+.mc-d{font-size:12px;color:rgba(255,255,255,.72)}
+
+/* ── Buttons ── */
+.back-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+  color:#fff;border-radius:22px;padding:9px 18px;font-size:13px;
+  cursor:pointer;margin-bottom:16px;font-family:inherit}
+.del-btn{background:rgba(255,107,107,.14);border:1px solid rgba(255,107,107,.38);
+  color:var(--r);border-radius:22px;padding:11px 20px;font-size:14px;
+  cursor:pointer;width:100%;font-family:inherit}
+.save-btn{width:100%;background:linear-gradient(135deg,var(--b),var(--g));
+  border:none;color:#fff;border-radius:16px;padding:14px;font-size:15px;
+  font-weight:900;cursor:pointer;font-family:inherit;margin-top:4px;transition:opacity .2s}
+.save-btn:disabled{opacity:.6;cursor:not-allowed}
+.fc{background:rgba(255,255,255,.04);border-radius:22px;padding:20px;border:1px solid var(--bdr)}
+
+/* ── Forms ── */
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:600}
+input,select,textarea{
+  width:100%;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.11);border-radius:14px;
+  padding:12px 14px;color:#fff;font-size:14px;margin-bottom:16px;
+  outline:none;font-family:inherit;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--b)}
+select option{background:#1a1a2e}
+textarea{resize:vertical;min-height:120px}
+
+/* ── Wishes ── */
+.wc{border-radius:20px;padding:16px;margin-bottom:13px;color:#fff}
+.wc-type{font-size:12px;font-weight:700;opacity:.75;margin-bottom:4px}
+.wc-name{font-size:19px;font-weight:900;margin-bottom:6px}
+.wc-msg{font-size:14px;font-style:italic;opacity:.9;line-height:1.55}
+.wc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.wc-time{font-size:11px;opacity:.6}
+.aw-btn{background:linear-gradient(135deg,var(--y),var(--o));border:none;
+  color:#fff;border-radius:22px;padding:8px 17px;font-size:13px;
+  font-weight:700;cursor:pointer;font-family:inherit}
+
+/* ── Files / Upload ── */
+.uz{border:2px dashed rgba(199,125,255,.4);border-radius:20px;
+  padding:28px 20px;text-align:center;cursor:pointer;
+  background:rgba(199,125,255,.06);transition:.2s;margin-bottom:8px}
+.uz:hover,.uz.drag{border-color:var(--p);background:rgba(199,125,255,.13)}
+.uz-i{font-size:40px;margin-bottom:8px}
+.uz-t{font-size:14px;font-weight:700;color:var(--p);margin-bottom:4px}
+.uz-s{font-size:12px;color:var(--muted)}
+#fi{display:none}
+.unote{font-size:12px;color:rgba(255,255,255,.38);text-align:center;margin-bottom:16px}
+.prog{height:5px;background:rgba(255,255,255,.1);border-radius:5px;
+  margin-bottom:14px;overflow:hidden;display:none}
+.prog-f{height:100%;background:linear-gradient(90deg,var(--p),var(--c));
+  border-radius:5px;transition:width .4s;width:0%}
+.fcard{display:flex;align-items:flex-start;gap:12px;
+  background:rgba(255,255,255,.05);border-radius:16px;padding:14px;
+  margin-bottom:11px;border-left:5px solid transparent}
+.fi-icon{font-size:30px;flex-shrink:0;line-height:1}
+.fi-info{flex:1;min-width:0}
+.fi-name{font-size:14px;font-weight:700;margin-bottom:4px;word-break:break-all}
+.fi-meta{font-size:12px;color:var(--muted)}
+.fi-prev{width:100%;max-height:130px;object-fit:cover;border-radius:10px;margin-top:9px;cursor:pointer}
+.fi-acts{display:flex;flex-direction:column;gap:7px;flex-shrink:0}
+.dl-btn{display:flex;align-items:center;justify-content:center;
+  width:37px;height:37px;background:rgba(77,150,255,.18);border-radius:11px;
+  text-decoration:none;font-size:17px;border:1px solid rgba(77,150,255,.35)}
+.fd-btn{width:37px;height:37px;background:rgba(255,107,107,.14);
+  border:1px solid rgba(255,107,107,.3);border-radius:11px;
+  cursor:pointer;font-size:17px;font-family:inherit}
+
+/* ── Sync status ── */
+.sync-status{display:flex;align-items:center;gap:8px;font-size:12px;
+  color:var(--muted);padding:8px 12px;background:rgba(255,255,255,.04);
+  border-radius:12px;margin-bottom:12px}
+.ss-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ss-dot.ok{background:var(--g);box-shadow:0 0 6px var(--g)}
+.ss-dot.syncing{background:var(--y);animation:pulse 1s infinite}
+.ss-dot.err{background:var(--r)}
+
+/* ── Empty ── */
+.empty{text-align:center;padding:50px 20px;color:rgba(255,255,255,.35)}
+.ei{font-size:52px;margin-bottom:12px}.em{font-size:14px;line-height:1.6}
+
+/* ── Toast ── */
+#toast{position:fixed;bottom:86px;left:50%;
+  transform:translateX(-50%) translateY(20px);
+  padding:12px 26px;border-radius:30px;color:#fff;
+  font-weight:700;font-size:14px;z-index:9999;
+  box-shadow:0 4px 24px rgba(0,0,0,.5);white-space:nowrap;
+  opacity:0;transition:opacity .3s,transform .3s;pointer-events:none}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── Lightbox ── */
+#lb{display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.9);z-index:9998;
+  align-items:center;justify-content:center;cursor:pointer}
+#lb.on{display:flex}
+#lb img{max-width:95vw;max-height:90vh;border-radius:12px}
+
+@media(min-width:481px){#app,nav,#setupScreen{box-shadow:0 0 60px rgba(0,0,0,.6)}}
+</style>
+</head>
+<body>
+
+<div id="loadBar"></div>
+
+<!-- ══ SPLASH ══ -->
+<div id="splash">
+  <div class="sp-logo">
+    <svg width="72" height="72" viewBox="0 0 72 72">
+      <defs><linearGradient id="sg" x1="0" y1="0" x2="72" y2="72">
+        <stop offset="0%" stop-color="#FF6B6B"/>
+        <stop offset="40%" stop-color="#FFD93D"/>
+        <stop offset="100%" stop-color="#4D96FF"/>
+      </linearGradient></defs>
+      <rect width="72" height="72" rx="20" fill="url(#sg)"/>
+      <text x="36" y="50" text-anchor="middle" font-size="36" font-weight="900" fill="white" font-family="serif">S</text>
+    </svg>
+  </div>
+  <div class="sp-title">Surmolkoltypo</div>
+  <div class="sp-sub">☁️ Cloud Storage • Permanent</div>
+  <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+</div>
+
+<!-- ══ SETUP SCREEN ══ -->
+<div id="setupScreen">
+  <div class="setup-header">
+    <div class="setup-logo">
+      <svg width="64" height="64" viewBox="0 0 64 64">
+        <defs><linearGradient id="sg2" x1="0" y1="0" x2="64" y2="64">
+          <stop offset="0%" stop-color="#FF6B6B"/>
+          <stop offset="50%" stop-color="#FFD93D"/>
+          <stop offset="100%" stop-color="#4D96FF"/>
+        </linearGradient></defs>
+        <rect width="64" height="64" rx="18" fill="url(#sg2)"/>
+        <text x="32" y="44" text-anchor="middle" font-size="30" font-weight="900" fill="white" font-family="serif">S</text>
+      </svg>
+    </div>
+    <div class="setup-title">Surmolkoltypo</div>
+    <div class="setup-sub">पहली बार Setup करें — सिर्फ 2 मिनट<br>Browser Clear होने के बाद भी Data Safe रहेगा</div>
+  </div>
+
+  <!-- WHY CLOUD -->
+  <div class="why-cloud">
+    <div class="why-title">☁️ Data हमेशा Safe क्यों रहेगा?</div>
+    <div class="why-row"><div class="why-icon">✅</div><div>Data आपके <strong>GitHub Account</strong> के Gist में Store होगा — Browser में नहीं</div></div>
+    <div class="why-row"><div class="why-icon">✅</div><div>Browser Clear करें, Phone बदलें, कहीं भी खोलें — Data वहीं रहेगा</div></div>
+    <div class="why-row"><div class="why-icon">✅</div><div>GitHub Account होना जरूरी है — बाकी सब Free है</div></div>
+    <div class="why-row"><div class="why-icon">✅</div><div>एक बार Setup करें — Token दोबारा मांगेगा नहीं</div></div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps-card">
+    <div class="steps-title">📋 GitHub Token कैसे बनाएं? (2 मिनट)</div>
+
+    <div class="step">
+      <div class="step-num" style="background:rgba(77,150,255,.2);color:var(--b)">1</div>
+      <div class="step-text">
+        <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a> पर जाएं<br>
+        <small style="color:var(--muted)">(GitHub Login जरूरी)</small>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:rgba(255,211,61,.2);color:var(--y)">2</div>
+      <div class="step-text">
+        <strong>Note</strong> में: <code>Surmolkoltypo</code> लिखें<br>
+        <strong>Expiration</strong>: <code>No expiration</code> चुनें
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:rgba(107,203,119,.2);color:var(--g)">3</div>
+      <div class="step-text">
+        <strong>Select scopes</strong> में सिर्फ <code>gist</code> ✅ पर tick करें
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:rgba(255,107,107,.2);color:var(--r)">4</div>
+      <div class="step-text">
+        नीचे <strong>"Generate token"</strong> दबाएं → Token copy करें → नीचे paste करें
+      </div>
+    </div>
+  </div>
+
+  <!-- TOKEN INPUT -->
+  <div class="token-section">
+    <div class="token-label">🔑 GitHub Token यहाँ Paste करें:</div>
+    <div class="token-input-wrap">
+      <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" autocorrect="off" spellcheck="false"/>
+      <button class="token-toggle" onclick="toggleTokenVis()" id="tokenToggle">👁️</button>
+    </div>
+  </div>
+
+  <button class="connect-btn" id="connectBtn" onclick="connectGitHub()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+    </svg>
+    GitHub से Connect करें
+  </button>
+  <div class="token-note">🔒 Token सिर्फ आपके Device पर Save होगा। GitHub Gist में Data Permanently Store होगा।</div>
+</div>
+
+<!-- ══ MAIN APP ══ -->
+<div id="app">
+  <header>
+    <div class="hdr-l">
+      <svg width="38" height="38" viewBox="0 0 38 38">
+        <defs><linearGradient id="hg" x1="0" y1="0" x2="38" y2="38">
+          <stop offset="0%" stop-color="#FF6B6B"/>
+          <stop offset="100%" stop-color="#4D96FF"/>
+        </linearGradient></defs>
+        <rect width="38" height="38" rx="10" fill="url(#hg)"/>
+        <text x="19" y="26" text-anchor="middle" font-size="16" font-weight="900" fill="white" font-family="serif">S</text>
+      </svg>
+      <div>
+        <div class="app-name">Surmolkoltypo</div>
+        <div class="app-sub" id="hdrUser">Loading…</div>
+      </div>
+    </div>
+    <div class="hdr-r">
+      <button id="installBtn" onclick="installApp()">📲 Install</button>
+      <div class="sync-indicator" id="syncInd">
+        <div class="sync-dot"></div>☁️ Synced
+      </div>
+      <button class="hdr-btn" onclick="resetSetup()">⚙️</button>
+    </div>
+  </header>
+
+  <!-- HOME -->
+  <div id="tab-home" class="tab on">
+    <div class="greet">
+      <div class="greet-t" id="greetTxt">नमस्ते 🙏</div>
+      <div class="greet-d" id="greetDt"></div>
+    </div>
+    <div class="stats">
+      <div class="sc" style="border-top:4px solid var(--b)" onclick="goTab('articles')">
+        <div class="sc-i">📰</div><div class="sc-n" id="sa">0</div><div class="sc-l">Articles</div>
+      </div>
+      <div class="sc" style="border-top:4px solid var(--y)" onclick="goTab('wishes')">
+        <div class="sc-i">🎉</div><div class="sc-n" id="sw">0</div><div class="sc-l">Wishes</div>
+      </div>
+      <div class="sc" style="border-top:4px solid var(--p)" onclick="goTab('files')">
+        <div class="sc-i">📁</div><div class="sc-n" id="sf">0</div><div class="sc-l">Files</div>
+      </div>
+    </div>
+    <div class="stitle">⚡ Quick Actions</div>
+    <div class="qg">
+      <button class="qb" style="background:linear-gradient(135deg,#4D96FF,#6BCB77)" onclick="goTab('write')">
+        <span style="font-size:28px">✍️</span>New Article
+      </button>
+      <button class="qb" style="background:linear-gradient(135deg,#FFD93D,#FF6B6B)" onclick="goTab('wishes')">
+        <span style="font-size:28px">🎉</span>Add Wish
+      </button>
+      <button class="qb" style="background:linear-gradient(135deg,#C77DFF,#48CAE4)" onclick="goTab('files')">
+        <span style="font-size:28px">📤</span>Upload File
+      </button>
+      <button class="qb" style="background:linear-gradient(135deg,#FF9A3C,#FFD93D)" onclick="goTab('articles')">
+        <span style="font-size:28px">📰</span>All Articles
+      </button>
+    </div>
+    <div class="stitle">🕒 Recent Articles</div>
+    <div id="recentArt"></div>
+    <div class="cbadge">
+      <div class="cbadge-icon">☁️</div>
+      <div>
+        <div class="cbadge-title">GitHub Gist — Permanent Storage</div>
+        <div class="cbadge-text">आपका सारा Data आपके GitHub Gist में Save है। Browser Clear, Phone Change — कुछ भी करें, Data कभी नहीं जाएगा।</div>
+      </div>
+    </div>
+    <div style="height:12px"></div>
+  </div>
+
+  <!-- ARTICLES -->
+  <div id="tab-articles" class="tab">
+    <div id="artList">
+      <div class="stitle" id="artListTitle">📰 सभी Articles</div>
+      <div id="artSync" class="sync-status" style="display:none">
+        <div class="ss-dot syncing"></div><span>Syncing…</span>
+      </div>
+      <div id="artContent"></div>
+    </div>
+    <div class="ad" id="artDetail">
+      <button class="back-btn" onclick="backList()">← वापस</button>
+      <div id="adHead" class="ad-head"></div>
+      <div id="adBody" class="ad-body"></div>
+      <button class="del-btn" id="adDel">🗑️ Delete Article</button>
+      <div style="height:14px"></div>
+    </div>
+  </div>
+
+  <!-- WRITE -->
+  <div id="tab-write" class="tab">
+    <div class="stitle">✍️ नया Article</div>
+    <div class="fc">
+      <label>📝 Title *</label>
+      <input type="text" id="wTitle" placeholder="Article का Title…"/>
+      <label>📂 Category</label>
+      <select id="wCat">
+        <option>General</option><option>News</option><option>Technology</option>
+        <option>Health</option><option>Education</option><option>Entertainment</option>
+        <option>Sports</option><option>Politics</option><option>Business</option><option>Other</option>
+      </select>
+      <label>🏷️ Tags</label>
+      <input type="text" id="wTags" placeholder="tag1, tag2"/>
+      <label>📄 Content *</label>
+      <textarea id="wBody" placeholder="Article लिखें…" rows="9"></textarea>
+      <button class="save-btn" id="pubBtn" onclick="publishArt()">💾 Publish करें</button>
+    </div>
+    <div style="height:12px"></div>
+  </div>
+
+  <!-- WISHES -->
+  <div id="tab-wishes" class="tab">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div class="stitle" style="margin:0">🎉 Wishes</div>
+      <button class="aw-btn" onclick="toggleWF()">➕ Add Wish</button>
+    </div>
+    <div id="wishForm" style="display:none;margin-bottom:16px">
+      <div class="fc">
+        <label>👤 किसके लिए?</label>
+        <input type="text" id="wName" placeholder="नाम…"/>
+        <label>🎊 Type</label>
+        <select id="wType">
+          <option>Birthday 🎂</option><option>Anniversary 💍</option>
+          <option>New Year 🎊</option><option>Festival 🪔</option>
+          <option>Success 🏆</option><option>Get Well Soon 🌸</option>
+          <option>Congratulations 🥳</option><option>Other 🌟</option>
+        </select>
+        <label>💬 Message</label>
+        <textarea id="wMsg" placeholder="शुभकामना…" rows="3"></textarea>
+        <button class="save-btn" style="background:linear-gradient(135deg,var(--y),var(--o))" onclick="saveWish()">🎉 Save करें</button>
+      </div>
+    </div>
+    <div id="wishContent"></div>
+  </div>
+
+  <!-- FILES -->
+  <div id="tab-files" class="tab">
+    <div class="stitle">📁 Files</div>
+    <div class="uz" id="uz" onclick="document.getElementById('fi').click()"
+         ondragover="dOver(event)" ondragleave="dLeave()" ondrop="dDrop(event)">
+      <div class="uz-i">📂</div>
+      <div class="uz-t">File Upload करने के लिए Click करें</div>
+      <div class="uz-s">या Drag & Drop करें यहाँ</div>
+    </div>
+    <input type="file" id="fi" onchange="onFileSel(event)"/>
+    <div class="unote">📌 Max 8MB • Images, PDF, Docs, Video, Audio — सब</div>
+    <div class="prog" id="prog"><div class="prog-f" id="progF"></div></div>
+    <div id="fileSync" class="sync-status" style="display:none">
+      <div class="ss-dot syncing"></div><span>Cloud पर Save हो रहा है…</span>
+    </div>
+    <div id="fileContent"></div>
+  </div>
+</div><!-- /app -->
+
+<!-- Bottom Nav -->
+<nav>
+  <button class="nb on" id="nb-home" onclick="goTab('home')">
+    <span class="nb-i">🏠</span><span class="nb-l">Home</span><div class="nb-dot"></div>
+  </button>
+  <button class="nb" id="nb-articles" onclick="goTab('articles')">
+    <span class="nb-i">📰</span><span class="nb-l">Articles</span><div class="nb-dot"></div>
+  </button>
+  <button class="nb" id="nb-write" onclick="goTab('write')">
+    <span class="nb-i">✍️</span><span class="nb-l">Write</span><div class="nb-dot"></div>
+  </button>
+  <button class="nb" id="nb-wishes" onclick="goTab('wishes')">
+    <span class="nb-i">🎉</span><span class="nb-l">Wishes</span><div class="nb-dot"></div>
+  </button>
+  <button class="nb" id="nb-files" onclick="goTab('files')">
+    <span class="nb-i">📁</span><span class="nb-l">Files</span><div class="nb-dot"></div>
+  </button>
+</nav>
+
+<div id="toast"></div>
+<div id="lb" onclick="this.classList.remove('on')"><img id="lbImg" src="" alt=""/></div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     JAVASCRIPT — GitHub Gist Permanent Storage
+══════════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ── Constants ─────────────────────────────────────────────── */
+const GIST_FILENAME = 'surmolkoltypo-data.json';
+const LS_TOKEN = 'smkt_gh_token';
+const LS_GIST  = 'smkt_gist_id';
+const GH_API   = 'https://api.github.com';
+
+/* ── App State ──────────────────────────────────────────────── */
+let TOKEN = '', GIST_ID = '';
+let articles = [], wishes = [], files = [];
+let currentArtId = null;
+let syncPending = false;
+
+/* ── Helpers ────────────────────────────────────────────────── */
+const ACOLS=['linear-gradient(135deg,#FF6B6B,#FFD93D)','linear-gradient(135deg,#6BCB77,#4D96FF)','linear-gradient(135deg,#C77DFF,#48CAE4)','linear-gradient(135deg,#FFB347,#FF6961)','linear-gradient(135deg,#56CFE1,#72EFDD)','linear-gradient(135deg,#FF9A9E,#FECFEF)','linear-gradient(135deg,#A8EDEA,#FED6E3)','linear-gradient(135deg,#D4FC79,#96E6A1)'];
+const WCOLS=['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#C77DFF','#FF9A3C','#48CAE4','#F72585'];
+const FCOLS=['#4D96FF','#6BCB77','#FFD93D','#FF6B6B','#C77DFF','#FF9A3C','#48CAE4'];
+
+const rc  = (a,i) => a[((i%a.length)+a.length)%a.length];
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmtDate = d => { const dt = new Date(d); return dt.toLocaleDateString('hi-IN',{day:'2-digit',month:'long',year:'numeric'}); };
+const fmtTime = d => { const dt = new Date(d); return dt.toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'}); };
+const fmtSize = b => b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB';
+const fileEmoji = t => { if(!t)return'📎'; if(t.startsWith('image/'))return'🖼️'; if(t.includes('pdf'))return'📄'; if(t.includes('word'))return'📝'; if(t.includes('excel')||t.includes('spreadsheet'))return'📊'; if(t.startsWith('video/'))return'🎥'; if(t.startsWith('audio/'))return'🎵'; if(t.includes('zip')||t.includes('rar'))return'🗜️'; return'📎'; };
+
+function grpDate(items){
+  const g={};
+  items.forEach(x => { const d=x.date.split('T')[0]; if(!g[d])g[d]=[]; g[d].push(x); });
+  return Object.entries(g).sort((a,b)=>b[0].localeCompare(a[0]));
+}
+
+/* ── Toast ──────────────────────────────────────────────────── */
+let ttimer;
+function toast(msg, bg='#6BCB77'){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.background = bg;
+  t.classList.add('on');
+  clearTimeout(ttimer);
+  ttimer = setTimeout(()=>t.classList.remove('on'), 3500);
+}
+
+/* ── Loading Bar ─────────────────────────────────────────────── */
+function setLoad(pct){
+  const b = document.getElementById('loadBar');
+  b.style.width = pct+'%';
+  if(pct>=100) setTimeout(()=>b.style.width='0%', 600);
+}
+
+/* ── Sync Indicator ─────────────────────────────────────────── */
+function setSyncStatus(state){ // 'ok' | 'syncing' | 'err'
+  const el = document.getElementById('syncInd');
+  if(state==='syncing') el.innerHTML='<div class="sync-dot" style="background:#FFD93D;animation:pulse 1s infinite"></div>⏳ Saving…';
+  else if(state==='err')  el.innerHTML='<div class="sync-dot" style="background:#FF6B6B"></div>❌ Error';
+  else                    el.innerHTML='<div class="sync-dot"></div>☁️ Synced';
+}
+
+/* ══════════════════════════════════════════════════════════════
+   GITHUB GIST API
+══════════════════════════════════════════════════════════════ */
+async function ghFetch(path, method='GET', body=null){
+  const opts = {
+    method,
+    headers: {
+      'Authorization': 'token '+TOKEN,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+    }
+  };
+  if(body) opts.body = JSON.stringify(body);
+  const r = await fetch(GH_API+path, opts);
+  if(!r.ok){ const e = await r.json().catch(()=>({})); throw new Error(e.message||'GitHub API Error '+r.status); }
+  return r.status===204 ? {} : r.json();
+}
+
+/* ── Build full gist content ─────────────────────────────────── */
+function buildGistContent(){
+  return JSON.stringify({ v:3, articles, wishes, files }, null, 2);
+}
+
+/* ── Save to Gist (debounced) ────────────────────────────────── */
+let saveTimer;
+function scheduleSave(){
+  syncPending = true;
+  setSyncStatus('syncing');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(pushToGist, 1200);
+}
+
+async function pushToGist(){
+  if(!TOKEN||!GIST_ID) return;
+  try {
+    await ghFetch('/gists/'+GIST_ID, 'PATCH', {
+      files: { [GIST_FILENAME]: { content: buildGistContent() } }
+    });
+    setSyncStatus('ok');
+    syncPending = false;
+  } catch(e){
+    setSyncStatus('err');
+    toast('❌ Cloud Save Error: '+e.message,'#FF6B6B');
+  }
+}
+
+/* ── Load from Gist ──────────────────────────────────────────── */
+async function pullFromGist(){
+  if(!TOKEN||!GIST_ID) return false;
+  setLoad(30);
+  try {
+    const gist = await ghFetch('/gists/'+GIST_ID);
+    const raw  = gist.files?.[GIST_FILENAME]?.content;
+    if(!raw) return false;
+    const data = JSON.parse(raw);
+    articles = data.articles||[];
+    wishes   = data.wishes||[];
+    files    = data.files||[];
+    setLoad(100);
+    return true;
+  } catch(e) {
+    setLoad(100);
+    return false;
+  }
+}
+
+/* ── Find existing Gist ──────────────────────────────────────── */
+async function findOrCreateGist(){
+  setLoad(20);
+  try {
+    // List user gists, look for our filename
+    let page = 1;
+    while(true){
+      const gists = await ghFetch('/gists?per_page=100&page='+page);
+      if(!gists.length) break;
+      for(const g of gists){
+        if(g.files?.[GIST_FILENAME]){
+          setLoad(60);
+          return g.id;
+        }
+      }
+      if(gists.length < 100) break;
+      page++;
+    }
+    // Not found — create new
+    setLoad(50);
+    const newGist = await ghFetch('/gists', 'POST', {
+      description: 'Surmolkoltypo App Data — DO NOT DELETE',
+      public: false,
+      files: { [GIST_FILENAME]: { content: JSON.stringify({v:3,articles:[],wishes:[],files:[]},null,2) } }
+    });
+    setLoad(80);
+    return newGist.id;
+  } catch(e){
+    throw new Error('Gist Error: '+e.message);
+  }
+}
+
+/* ── Get GitHub user info ────────────────────────────────────── */
+async function getGHUser(){
+  const u = await ghFetch('/user');
+  return u.login||'User';
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SETUP FLOW
+══════════════════════════════════════════════════════════════ */
+window.toggleTokenVis = () => {
+  const inp = document.getElementById('tokenInput');
+  const btn = document.getElementById('tokenToggle');
+  if(inp.type==='password'){ inp.type='text'; btn.textContent='🙈'; }
+  else { inp.type='password'; btn.textContent='👁️'; }
+};
+
+window.connectGitHub = async () => {
+  const raw = document.getElementById('tokenInput').value.trim();
+  if(!raw){ toast('⚠️ Token डालें पहले!','#FF6B6B'); return; }
+  if(!raw.startsWith('ghp_') && !raw.startsWith('github_pat_')){
+    toast('⚠️ Token "ghp_" से शुरू होना चाहिए','#FF6B6B'); return;
+  }
+  TOKEN = raw;
+  const btn = document.getElementById('connectBtn');
+  btn.disabled = true; btn.textContent = '⏳ Connecting…';
+  try {
+    const username = await getGHUser();
+    const gid = await findOrCreateGist();
+    GIST_ID = gid;
+    // Persist
+    localStorage.setItem(LS_TOKEN, TOKEN);
+    localStorage.setItem(LS_GIST,  GIST_ID);
+    await pullFromGist();
+    document.getElementById('hdrUser').textContent = '@'+username;
+    launchApp();
+    toast('✅ Connected! Data Cloud पर Permanent है','#6BCB77');
+  } catch(e){
+    toast('❌ '+e.message,'#FF6B6B');
+    btn.disabled = false; btn.textContent = '⚠️ दोबारा try करें';
+    TOKEN=''; GIST_ID='';
+  }
+};
+
+window.resetSetup = () => {
+  if(!confirm('Setup Reset करें? Token clear होगा।\n\nGist में Data Safe रहेगा।')) return;
+  localStorage.removeItem(LS_TOKEN);
+  localStorage.removeItem(LS_GIST);
+  location.reload();
+};
+
+/* ══════════════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════════════ */
+window.addEventListener('load', async ()=>{
+  if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+  // Check saved token
+  const savedToken = localStorage.getItem(LS_TOKEN);
+  const savedGist  = localStorage.getItem(LS_GIST);
+
+  await new Promise(r=>setTimeout(r,1400)); // splash
+
+  if(savedToken && savedGist){
+    TOKEN   = savedToken;
+    GIST_ID = savedGist;
+    try {
+      const username = await getGHUser();
+      await pullFromGist();
+      document.getElementById('hdrUser').textContent = '@'+username;
+      launchApp();
+    } catch(e){
+      // Token invalid? Re-prompt
+      localStorage.removeItem(LS_TOKEN);
+      localStorage.removeItem(LS_GIST);
+      showSetup();
+    }
+  } else {
+    showSetup();
+  }
+
+  setupGreeting();
+});
+
+function showSetup(){
+  document.getElementById('splash').style.display      = 'none';
+  document.getElementById('setupScreen').style.display = 'flex';
+  document.getElementById('app').style.display         = 'none';
+  document.querySelector('nav').style.display          = 'none';
+}
+
+function launchApp(){
+  document.getElementById('splash').style.display      = 'none';
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('app').style.display         = 'flex';
+  document.querySelector('nav').style.display          = 'flex';
+  renderAll();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════════════ */
+window.goTab = (tab) => {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+tab).classList.add('on');
+  document.getElementById('nb-'+tab).classList.add('on');
+  if(tab==='articles'){
+    document.getElementById('artList').style.display   = 'block';
+    document.getElementById('artDetail').style.display = 'none';
+  }
+};
+
+/* ══════════════════════════════════════════════════════════════
+   RENDER ALL
+══════════════════════════════════════════════════════════════ */
+function renderAll(){
+  document.getElementById('sa').textContent = articles.length;
+  document.getElementById('sw').textContent = wishes.length;
+  document.getElementById('sf').textContent = files.length;
+  renderRecent();
+  renderArticles();
+  renderWishes();
+  renderFiles();
+}
+
+/* ── Greeting ── */
+function setupGreeting(){
+  const h=new Date().getHours();
+  const g=h<5?'शुभ रात्रि 🌙':h<12?'शुभ प्रभात 🌅':h<17?'नमस्ते 🙏':h<21?'शुभ संध्या 🌆':'शुभ रात्रि 🌙';
+  document.getElementById('greetTxt').textContent=g;
+  document.getElementById('greetDt').textContent=new Date().toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ARTICLES
+══════════════════════════════════════════════════════════════ */
+function renderRecent(){
+  const el=document.getElementById('recentArt');
+  if(!articles.length){el.innerHTML='<div class="empty"><div class="ei">📰</div><div class="em">कोई Article नहीं।</div></div>';return;}
+  el.innerHTML=articles.slice(0,3).map((a,i)=>`
+    <div class="mc" style="background:${rc(ACOLS,i)}" onclick="goTab('articles');openArt('${esc(a.id)}')">
+      <div class="mc-t">${esc(a.title)}</div>
+      <div class="mc-d">📅 ${fmtDate(a.date)}</div>
+    </div>`).join('');
+}
+
+function renderArticles(){
+  const el=document.getElementById('artContent');
+  const title=document.getElementById('artListTitle');
+  title.textContent=`📰 सभी Articles (${articles.length})`;
+  if(!articles.length){el.innerHTML='<div class="empty"><div class="ei">📰</div><div class="em">कोई Article नहीं।<br>Write tab में लिखें!</div></div>';return;}
+  const grps=grpDate(articles);
+  let html='',idx=0;
+  grps.forEach(([day,items])=>{
+    html+=`<div class="dhdr">📅 ${fmtDate(day+'T00:00:00')}</div>`;
+    items.forEach(a=>{
+      html+=`<div class="ac" style="background:${rc(ACOLS,idx++)}" onclick="openArt('${esc(a.id)}')">
+        <div class="ac-cat">${esc(a.category||'General')}</div>
+        <div class="ac-t">${esc(a.title)}</div>
+        <div class="ac-s">${esc((a.body||'').slice(0,100))}…</div>
+        <div class="ac-m"><span>⏰ ${fmtTime(a.date)}</span><span class="rm">पढ़ें →</span></div>
+      </div>`;
+    });
+  });
+  el.innerHTML=html;
+}
+
+window.openArt = (id) => {
+  const a=articles.find(x=>x.id===id); if(!a)return;
+  currentArtId=id;
+  const tags=(a.tags||'').split(',').filter(t=>t.trim()).map(t=>`<span class="tag">${esc(t.trim())}</span>`).join('');
+  const i=articles.indexOf(a);
+  document.getElementById('adHead').style.background=rc(ACOLS,i);
+  document.getElementById('adHead').innerHTML=`
+    <div class="ad-cat">${esc(a.category||'General')}</div>
+    <div class="ad-t">${esc(a.title)}</div>
+    <div class="ad-date">📅 ${fmtDate(a.date)} &nbsp;⏰ ${fmtTime(a.date)}</div>
+    ${tags?'<div class="ad-tags">'+tags+'</div>':''}`;
+  document.getElementById('adBody').textContent=a.body||'';
+  document.getElementById('adDel').onclick=()=>deleteArt(id);
+  document.getElementById('artList').style.display='none';
+  document.getElementById('artDetail').style.display='block';
+};
+
+window.backList = () => {
+  document.getElementById('artList').style.display='block';
+  document.getElementById('artDetail').style.display='none';
+  currentArtId=null;
+};
+
+window.publishArt = async () => {
+  const title=document.getElementById('wTitle').value.trim();
+  const body=document.getElementById('wBody').value.trim();
+  if(!title||!body){toast('⚠️ Title और Content जरूरी है!','#FF6B6B');return;}
+  const btn=document.getElementById('pubBtn');
+  btn.disabled=true;btn.textContent='⏳ Publishing…';
+  const art={id:Date.now().toString(),title,body,category:document.getElementById('wCat').value,tags:document.getElementById('wTags').value,date:new Date().toISOString()};
+  articles.unshift(art);
+  scheduleSave();
+  document.getElementById('wTitle').value='';
+  document.getElementById('wBody').value='';
+  document.getElementById('wTags').value='';
+  btn.disabled=false;btn.textContent='💾 Publish करें';
+  toast('📰 Article Published — Cloud पर Save हो रहा है','#4D96FF');
+  renderAll();goTab('articles');
+};
+
+async function deleteArt(id){
+  if(!confirm('Article Delete करें?'))return;
+  articles=articles.filter(a=>a.id!==id);
+  scheduleSave();
+  toast('🗑️ Article Delete हुआ','#FF6B6B');
+  backList();renderAll();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   WISHES
+══════════════════════════════════════════════════════════════ */
+window.toggleWF=()=>{
+  const f=document.getElementById('wishForm');
+  f.style.display=f.style.display==='none'?'block':'none';
+};
+
+window.saveWish=async()=>{
+  const name=document.getElementById('wName').value.trim();
+  const msg=document.getElementById('wMsg').value.trim();
+  if(!name||!msg){toast('⚠️ नाम और Message जरूरी है!','#FF6B6B');return;}
+  const wish={id:Date.now().toString(),name,msg,type:document.getElementById('wType').value,date:new Date().toISOString()};
+  wishes.unshift(wish);
+  scheduleSave();
+  document.getElementById('wName').value='';
+  document.getElementById('wMsg').value='';
+  document.getElementById('wishForm').style.display='none';
+  toast('🎉 Wish Save हो गई!','#FFD93D');
+  renderAll();
+};
+
+window.deleteWish=async(id)=>{
+  if(!confirm('Wish Delete करें?'))return;
+  wishes=wishes.filter(w=>w.id!==id);
+  scheduleSave();
+  toast('🗑️ Wish Delete हुई','#FF6B6B');
+  renderAll();
+};
+
+function renderWishes(){
+  const el=document.getElementById('wishContent');
+  if(!wishes.length){el.innerHTML='<div class="empty"><div class="ei">🎉</div><div class="em">कोई Wish नहीं।<br>Add Wish से जोड़ें!</div></div>';return;}
+  const grps=grpDate(wishes);
+  let html='',idx=0;
+  grps.forEach(([day,items])=>{
+    html+=`<div class="dhdr">📅 ${fmtDate(day+'T00:00:00')}</div>`;
+    items.forEach(w=>{
+      html+=`<div class="wc" style="background:${rc(WCOLS,idx++)}">
+        <div class="wc-type">${esc(w.type)}</div>
+        <div class="wc-name">${esc(w.name)} को</div>
+        <div class="wc-msg">"${esc(w.msg)}"</div>
+        <div class="wc-foot">
+          <span class="wc-time">⏰ ${fmtTime(w.date)}</span>
+          <button onclick="deleteWish('${esc(w.id)}')" style="background:rgba(0,0,0,.2);border:none;color:#fff;border-radius:8px;padding:3px 10px;cursor:pointer;font-size:12px">🗑️</button>
+        </div>
+      </div>`;
+    });
+  });
+  el.innerHTML=html;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FILES — Upload as base64 into Gist (separate file entry)
+══════════════════════════════════════════════════════════════ */
+window.dOver  =(e)=>{ e.preventDefault(); document.getElementById('uz').classList.add('drag'); };
+window.dLeave =()=>  document.getElementById('uz').classList.remove('drag');
+window.dDrop  =(e)=>{ e.preventDefault(); document.getElementById('uz').classList.remove('drag'); const f=e.dataTransfer.files[0]; if(f)processFile(f); };
+window.onFileSel=(e)=>{ const f=e.target.files[0]; if(f)processFile(f); e.target.value=''; };
+
+async function processFile(file){
+  const MAX=8*1024*1024;
+  if(file.size>MAX){toast('⚠️ Max 8MB है! यह File बड़ी है।','#FF6B6B');return;}
+  showProg(true);
+  const syncEl=document.getElementById('fileSync');
+  syncEl.style.display='flex';
+  setSyncStatus('syncing');
+  try {
+    // Read as base64
+    const b64=await readFileB64(file);
+    // Store file data separately in gist
+    const fileKey='smkt_file_'+Date.now();
+    const fileMeta={id:fileKey,name:file.name,type:file.type||'application/octet-stream',size:file.size,date:new Date().toISOString(),b64};
+    files.unshift(fileMeta);
+    // Save everything to gist
+    await ghFetch('/gists/'+GIST_ID,'PATCH',{
+      files:{[GIST_FILENAME]:{content:buildGistContent()}}
+    });
+    setSyncStatus('ok');
+    toast('✅ '+file.name+' — Cloud पर Permanent Save!','#C77DFF');
+    renderAll();
+  } catch(e){
+    setSyncStatus('err');
+    toast('❌ Upload Error: '+e.message,'#FF6B6B');
+    files.shift(); // rollback
+  }
+  showProg(false);
+  syncEl.style.display='none';
+}
+
+function readFileB64(file){
+  return new Promise((res,rej)=>{
+    const fr=new FileReader();
+    fr.onprogress=ev=>{ if(ev.lengthComputable) document.getElementById('progF').style.width=(ev.loaded/ev.total*85)+'%'; };
+    fr.onload=ev=>res(ev.target.result);
+    fr.onerror=()=>rej(new Error('File read failed'));
+    fr.readAsDataURL(file);
+  });
+}
+
+function showProg(v){
+  const p=document.getElementById('prog');
+  const f=document.getElementById('progF');
+  p.style.display=v?'block':'none';
+  if(!v){f.style.width='100%';setTimeout(()=>f.style.width='0%',500);}
+}
+
+window.deleteFile=async(id)=>{
+  if(!confirm('File Delete करें?'))return;
+  files=files.filter(f=>f.id!==id);
+  await pushToGist();
+  toast('🗑️ File Delete हुई','#FF6B6B');
+  renderAll();
+};
+
+window.openLB=(src)=>{ document.getElementById('lbImg').src=src; document.getElementById('lb').classList.add('on'); };
+
+function renderFiles(){
+  const el=document.getElementById('fileContent');
+  if(!files.length){el.innerHTML='<div class="empty"><div class="ei">📁</div><div class="em">कोई File नहीं।<br>Upload करें!</div></div>';return;}
+  const grps=grpDate(files);
+  let html='',idx=0;
+  grps.forEach(([day,items])=>{
+    html+=`<div class="dhdr">📅 ${fmtDate(day+'T00:00:00')}</div>`;
+    items.forEach(f=>{
+      const isImg=f.type&&f.type.startsWith('image/');
+      html+=`<div class="fcard" style="border-left-color:${rc(FCOLS,idx++)}">
+        <div class="fi-icon">${fileEmoji(f.type)}</div>
+        <div class="fi-info">
+          <div class="fi-name">${esc(f.name)}</div>
+          <div class="fi-meta">${fmtSize(f.size)} • ⏰ ${fmtTime(f.date)} • ☁️ Cloud</div>
+          ${isImg&&f.b64?`<img class="fi-prev" src="${f.b64}" loading="lazy" onclick="openLB('${f.b64}')" alt="${esc(f.name)}"/>`:''}
+        </div>
+        <div class="fi-acts">
+          ${f.b64?`<a href="${f.b64}" download="${esc(f.name)}" class="dl-btn">⬇️</a>`:''}
+          <button class="fd-btn" onclick="deleteFile('${esc(f.id)}')">🗑️</button>
+        </div>
+      </div>`;
+    });
+  });
+  el.innerHTML=html;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PWA INSTALL
+══════════════════════════════════════════════════════════════ */
+let dPE=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dPE=e;document.getElementById('installBtn').classList.add('show');});
+window.addEventListener('appinstalled',()=>{document.getElementById('installBtn').classList.remove('show');toast('✅ App Install हो गया!','#6BCB77');});
+window.installApp=async()=>{
+  if(!dPE){toast('ℹ️ Browser Menu → Add to Home Screen','#4D96FF');return;}
+  dPE.prompt();await dPE.userChoice;dPE=null;
+};
+
+/* ── Warn before unload if sync pending ── */
+window.addEventListener('beforeunload',e=>{
+  if(syncPending){e.preventDefault();e.returnValue='Data sync हो रहा है…';}
+});
+</script>
+</body>
+</html>
